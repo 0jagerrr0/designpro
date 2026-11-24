@@ -1,6 +1,2 @@
-*.рус
-db.sqlite3
-.idea/
-venv/
-__pycache__/
-myenv/
+# Created by venv; see https://docs.python.org/3/library/venv.html
+*

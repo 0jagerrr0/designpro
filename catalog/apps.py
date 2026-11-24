@@ -1,6 +1,7 @@
 from django.apps import AppConfig
 
 
-class LocaldesignConfig(AppConfig):
+class CatalogConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'localdesign'
+    name = 'catalog'
+
