@@ -1,0 +1,27 @@
+
+{% extends 'base.html' %}
+{% block title %}Личный кабинет — Design.pro{% endblock %}
+
+{% block content %}
+
+<div class="card">
+    <h2>Личный кабинет</h2>
+
+    <p>Добро пожаловать, {{ user.first_name }}!</p>
+
+    <hr>
+
+    <p><strong>Логин:</strong> {{ user.username }}</p>
+    <p><strong>Электронная почта:</strong> {{ user.email }}</p>
+
+    <hr>
+
+    <a href="{% url 'index' %}" class="button">На главную</a>
+
+    <form method="post" action="{% url 'logout' %}">
+        {% csrf_token %}
+        <button type="submit">Выйти из аккаунта</button>
+    </form>
+</div>
+
+{% endblock %}

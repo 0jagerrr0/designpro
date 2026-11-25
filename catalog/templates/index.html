@@ -1,10 +1,6 @@
-
 {% extends 'base.html' %}
-
 {% block title %}Главная — Design.pro{% endblock %}
-
 {% block content %}
-
 <div class="card">
     <h2>Добро пожаловать в Design.pro!</h2>
 
@@ -12,9 +8,20 @@
         Платформа для оформления и отслеживания заявок на дизайн.
     </p>
 
-    <a href="#" class="button">Войти</a>
-    <a href="#" class="button">Регистрация</a>
+    {% if user.is_authenticated %}
+
+        <p>Вы вошли как {{ user.username }}.</p>
+
+        <a href="{% url 'account' %}" class="button">
+            Личный кабинет
+        </a>
+
+    {% else %}
+
+        <a href="{% url 'login' %}" class="button">Войти</a>
+        <a href="{% url 'register' %}" class="button">Регистрация</a>
+
+    {% endif %}
 </div>
 
 {% endblock %}
-
