@@ -1,9 +1,6 @@
-
 {% extends 'base.html' %}
 {% block title %}Личный кабинет — Design.pro{% endblock %}
-
 {% block content %}
-
 <div class="card">
     <h2>Личный кабинет</h2>
 
@@ -16,6 +13,48 @@
 
     <hr>
 
+    <h3>Мои заявки</h3>
+    <form method="get">
+    <label for="status">Фильтр по статусу:</label>
+
+    <select name="status" id="status">
+        <option value="" {% if selected_status == '' %}selected{% endif %}>Все заявки</option>
+        <option value="new" {% if selected_status == 'new' %}selected{% endif %}>Новая</option>
+        <option value="accepted" {% if selected_status == 'accepted' %}selected{% endif %}>Принято в работу</option>
+        <option value="completed" {% if selected_status == 'completed' %}selected{% endif %}>Выполнено</option>
+    </select>
+
+    <button type="submit">Применить</button>
+</form>
+
+    {% for design_request in user_requests %}
+        <div class="card">
+            <h4>{{ design_request.title }}</h4>
+
+            <p>{{ design_request.description }}</p>
+            <p><strong>Категория:</strong> {{ design_request.category }}</p>
+            <p><strong>Статус:</strong> {{ design_request.get_status_display }}</p>
+            <p><strong>Дата создания:</strong> {{ design_request.created_at|date:"d.m.Y H:i" }}</p>
+
+            {% if design_request.room_image %}
+                <img src="{{ design_request.room_image.url }}" alt="Фото помещения" width="300">
+            {% endif %}
+            {% if design_request.status == 'new' %}
+    <form method="post" action="{% url 'delete_request' design_request.id %}">
+        {% csrf_token %}
+        <button type="submit" onclick="return confirm('Вы действительно хотите удалить эту заявку?');">
+            Удалить заявку
+        </button>
+    </form>
+{% endif %}
+        </div>
+    {% empty %}
+        <p>У вас пока нет заявок.</p>
+    {% endfor %}
+
+    <hr>
+
+    <a href="{% url 'create_request' %}" class="button">Создать заявку</a>
     <a href="{% url 'index' %}" class="button">На главную</a>
 
     <form method="post" action="{% url 'logout' %}">
@@ -23,5 +62,4 @@
         <button type="submit">Выйти из аккаунта</button>
     </form>
 </div>
-
 {% endblock %}

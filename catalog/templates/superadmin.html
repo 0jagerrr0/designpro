@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+{% block title %}Административная панель — Design.pro{% endblock %}
+{% block content %}
+<div class="card">
+    <h2>Административная панель</h2>
+
+    <p>Добро пожаловать, администратор!</p>
+    <a href="{% url 'index' %}" class="button">
+    На главную
+</a>
+    <form method="post" action="{% url 'logout' %}">
+    {% csrf_token %}
+    <button type="submit">Выйти из аккаунта</button>
+</form>
+
+    <hr>
+
+    <h3>Управление категориями</h3>
+
+    <form method="post" action="{% url 'add_category' %}">
+        {% csrf_token %}
+        {{ category_form.as_p }}
+        <button type="submit">Добавить категорию</button>
+    </form>
+
+    <h4>Существующие категории</h4>
+
+    {% for category in categories %}
+        <div>
+            <p>
+                {{ category.name }}
+
+                <form method="post" action="{% url 'delete_category' category.id %}">
+                    {% csrf_token %}
+                    <button type="submit" onclick="return confirm('Удалить категорию и все связанные с ней заявки?');">
+                        Удалить
+                    </button>
+                </form>
+            </p>
+        </div>
+    {% empty %}
+        <p>Категорий пока нет.</p>
+    {% endfor %}
+
+    <hr>
+
+    <h3>Все заявки пользователей</h3>
+
+    {% for design_request in all_requests %}
+        <div class="card">
+            <h4>{{ design_request.title }}</h4>
+
+            <p><strong>Пользователь:</strong> {{ design_request.user.username }}</p>
+            <p><strong>Описание:</strong> {{ design_request.description }}</p>
+            <p><strong>Категория:</strong> {{ design_request.category }}</p>
+            <p><strong>Статус:</strong> {{ design_request.get_status_display }}</p>
+            <p><strong>Дата создания:</strong> {{ design_request.created_at|date:"d.m.Y H:i" }}</p>
+
+            {% if design_request.room_image %}
+                <img src="{{ design_request.room_image.url }}" alt="Фото помещения" width="300">
+            {% endif %}
+
+            {% if design_request.status == 'new' %}
+                <hr>
+
+                <h4>Принять заявку в работу</h4>
+
+                <form method="post" action="{% url 'accept_request' design_request.id %}">
+                    {% csrf_token %}
+                    <label for="comment_{{ design_request.id }}">Комментарий администратора:</label>
+                    <textarea name="admin_comment" id="comment_{{ design_request.id }}" required></textarea>
+                    <button type="submit">Принять в работу</button>
+                </form>
+
+                <hr>
+
+                <h4>Завершить заявку</h4>
+
+                <form method="post" enctype="multipart/form-data" action="{% url 'complete_request' design_request.id %}">
+                    {% csrf_token %}
+                    <label for="design_{{ design_request.id }}">Изображение готового дизайна:</label>
+                    <input type="file" name="design_image" id="design_{{ design_request.id }}" accept=".jpg,.jpeg,.png,.bmp" required>
+                    <button type="submit">Отметить как выполненную</button>
+                </form>
+            {% endif %}
+
+            {% if design_request.admin_comment %}
+                <p><strong>Комментарий администратора:</strong> {{ design_request.admin_comment }}</p>
+            {% endif %}
+
+            {% if design_request.design_image %}
+                <p><strong>Готовый дизайн:</strong></p>
+                <img src="{{ design_request.design_image.url }}" alt="Готовый дизайн" width="300">
+            {% endif %}
+        </div>
+    {% empty %}
+        <p>Заявок пока нет.</p>
+    {% endfor %}
+</div>
+{% endblock %}

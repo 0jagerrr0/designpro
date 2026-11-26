@@ -10,18 +10,65 @@
 
     {% if user.is_authenticated %}
 
-        <p>Вы вошли как {{ user.username }}.</p>
+    <p>Вы вошли как {{ user.username }}.</p>
 
+    {% if user.is_staff %}
+        <a href="{% url 'superadmin' %}" class="button">
+            Административная панель
+        </a>
+    <form method="post" action="{% url 'logout' %}">
+        {% csrf_token %}
+        <button type="submit">Выйти из аккаунта</button>
+    </form>
+    {% else %}
         <a href="{% url 'account' %}" class="button">
             Личный кабинет
         </a>
+    {% endif %}
 
-    {% else %}
+{% else %}
 
         <a href="{% url 'login' %}" class="button">Войти</a>
         <a href="{% url 'register' %}" class="button">Регистрация</a>
 
     {% endif %}
 </div>
+<div class="card">
+    <h2>Статистика заявок</h2>
 
+    <p>
+        Заявок принято в работу:
+        <strong>{{ accepted_count }}</strong>
+    </p>
+</div>
+
+<div class="card">
+    <h2>Выполненные проекты</h2>
+
+    {% for design_request in completed_requests %}
+        <div class="card">
+            <h3>{{ design_request.title }}</h3>
+
+            <p>
+                <strong>Дата:</strong>
+                {{ design_request.created_at|date:"d.m.Y H:i" }}
+            </p>
+
+            <p>
+                <strong>Категория:</strong>
+                {{ design_request.category }}
+            </p>
+
+            {% if design_request.design_image %}
+                <img
+                    src="{{ design_request.design_image.url }}"
+                    alt="Готовый дизайн"
+                    width="300"
+                >
+            {% endif %}
+        </div>
+    {% empty %}
+        <p>Пока нет выполненных проектов.</p>
+    {% endfor %}
+</div>
 {% endblock %}

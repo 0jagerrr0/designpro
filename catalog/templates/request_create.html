@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block title %}Создание заявки — Design.pro{% endblock %}
+{% block content %}
+<div class="card">
+    <h2>Создание заявки</h2>
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        {{ form.as_p }}
+
+        <button type="submit">Отправить заявку</button>
+    </form>
+
+    <p>
+        <a href="{% url 'account' %}">Вернуться в личный кабинет</a>
+    </p>
+</div>
+{% endblock %}
